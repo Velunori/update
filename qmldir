@@ -1,0 +1,4 @@
+Service 1.0 Service.qml
+Window 1.0 Window.qml
+Widget 1.0 Widget.qml
+singleton Runtime 1.0 Runtime.qml

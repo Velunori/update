@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "velunori.update",
+  "name": "Velunori Update",
+  "version": "0.1.0",
+  "author": "Velunori",
+  "description": "Update window with release notes, package list and live progress for omarchy update.",
+  "kinds": ["service", "overlay", "bar-widget"],
+  "keepLoaded": true,
+  "omarchy": {"clonedFrom": "omarchy.system-update"},
+  "entryPoints": {"service": "Service.qml", "overlay": "Window.qml", "barWidget": "Widget.qml"},
+  "barWidget": {
+    "displayName": "Updates", "description": "Shows pending updates and opens the update window",
+    "category": "System", "allowMultiple": false, "defaultSection": "center", "defaults": {}
+  }
+}
