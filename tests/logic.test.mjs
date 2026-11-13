@@ -41,3 +41,8 @@ test('wording helpers', () => {
     assert.equal(logic.restartQuestion('Remove orphans?'), false);
     assert.equal(logic.activeStep({steps: [{state: 'done'}, {state: 'failed', label: 'System packages'}]}).label, 'System packages');
 });
+
+test('release presentation keeps real content and removes standalone link paragraphs', () => {
+    const blocks=[{type:'p',text:'Actual release description'},{type:'p',text:'Release notes: https://example.invalid/notes'},{type:'h',text:'Features'},{type:'li',text:'A real improvement'}];
+    assert.equal(JSON.stringify(logic.releaseBlocks(blocks)), JSON.stringify([blocks[0],blocks[2],blocks[3]]));
+});

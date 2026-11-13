@@ -6,7 +6,9 @@ layout="${VELUNORI_TEST_LAYOUT:-copy}"
 [[ "$layout" == copy || "$layout" == symlink ]] || { echo 'Unknown test layout' >&2; exit 1; }
 if [[ -z ${VELUNORI_PREVIEW_PATH:-} ]]; then
   # Runs a stand-in for omarchy-update in a temporary directory; never the real one.
-  python3 -m unittest discover -s "$repo_dir/tests" -p 'test_*.py'
+  if [[ ${VELUNORI_TEST_UI_ONLY:-0} != 1 ]]; then
+    python3 -m unittest discover -s "$repo_dir/tests" -p 'test_*.py'
+  fi
   node "$repo_dir/tests/logic.test.mjs"
 fi
 runtime_dir=$(mktemp -d)

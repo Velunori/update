@@ -45,3 +45,11 @@ function summary(check) {
     var count = updates.length + (updates.length === 1 ? " package" : " packages");
     return check && check.omarchy ? "Omarchy " + String(check.omarchy.new).split("-")[0] + " · " + count : count;
 }
+
+// Standalone links already have a pinned action in the view. Keep all prose
+// and structured highlights; never synthesize a release summary.
+function releaseBlocks(blocks) {
+    return (blocks || []).filter(function(block) {
+        return !/^(?:release notes\s*:\s*)?https?:\/\/\S+\s*$/i.test(String(block.text || "").trim());
+    });
+}

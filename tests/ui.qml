@@ -9,6 +9,17 @@ ShellRoot {
     id: testRoot
     property string failure: ""
     function check(value, message) { if (!value) failure += message + "; "; }
+    function checkFooter() {
+        var footer = find(view, "updateFooter");
+        var point = footer.mapToItem(view, 0, 0);
+        check(point.y >= 0 && point.y + footer.height <= view.height + 1, "action footer fits window");
+        for (var name of ["updatePrimary", "updatePassword", "updateConfirmYes", "updateConfirmNo"]) {
+            var item = find(view, name);
+            if (!item.visible) continue;
+            var pos = item.mapToItem(view, 0, 0);
+            check(pos.y >= 0 && pos.y + item.height <= view.height + 1 && pos.x >= 0 && pos.x + item.width <= view.width + 1, name + " stays fully visible");
+        }
+    }
     function find(parent, name) { if (parent.objectName === name) return parent; var kids = parent.children || []; for (var i = 0; i < kids.length; i++) { var hit = find(kids[i], name); if (hit) return hit; } return null; }
     readonly property var steps: ["Preparing", "Snapshot", "Keyring", "System packages", "Migrations", "AUR packages", "Cleanup", "Finishing"]
     function runAt(index, extra) {
@@ -50,7 +61,7 @@ ShellRoot {
     }
     V.Theme { id: tokens; bar: ({velunori: {apiVersion: 1, accentName: "lavender", motion: true}}) }
     FloatingWindow {
-        visible: true; implicitWidth: 680; implicitHeight: 430; color: "transparent"
+        visible: true; implicitWidth: Number(Quickshell.env("VELUNORI_TEST_WIDTH") || 760); implicitHeight: Number(Quickshell.env("VELUNORI_TEST_HEIGHT") || 540); color: "transparent"
         Rectangle {
             id: surface
             anchors.fill: parent; radius: 18; color: "#202026"; border.color: "#48464f"; clip: true
@@ -79,7 +90,7 @@ ShellRoot {
                 return;
             }
             var title = find(view, "updateTitle"), subtitle = find(view, "updateSubtitle"), primary = find(view, "updatePrimary"), password = find(view, "updatePassword");
-            check(view.view === "available" && title.text === "Update available" && subtitle.text === "Omarchy 4.5.0 · 4 packages", "pending updates are summarised");
+            check(view.view === "available" && title.text === "Ready to update" && subtitle.text === "4 packages available", "pending updates are summarised");
             check(view.tab === 0 && find(view, "updatePackages").count === 4, "release notes open first and every package is listed");
             find(view, "updateNotesLink").clicked(); check(fake.opened === "https://example.invalid/notes", "release notes link opens through the backend");
             primary.clicked(); check(fake.starts === 1, "Update now starts the update");
@@ -97,7 +108,7 @@ ShellRoot {
             setState("running");
             check(view.view === "running" && view.tab === 2 && title.text === "Updating…", "running switches to the log");
             check(subtitle.text === "System packages · 23 of 74 · hyprland" && find(view, "updateLog").count === 4, "current step, package progress and output are shown");
-            check(!primary.visible && Math.abs(find(view, "updateRing").value - 0.47) < 0.001, "no action while running; ring shows progress");
+            check(!primary.visible && Math.abs(find(view, "updateProgress").value - 0.47) < 0.001, "no action while running; bar shows progress");
 
             setState("confirm");
             check(title.text === "Restart to finish" && find(view, "updateConfirmYes").text === "Restart now", "reboot question reads as a restart choice");
@@ -110,11 +121,27 @@ ShellRoot {
 
             setState("uptodate");
             check(title.text === "System is up to date" && subtitle.text === "Omarchy 4.5.0 · checked 5 minutes ago" && primary.text === "Check again", "up to date state");
-            check(find(view, "updateRing").value === 1 && find(view, "updatePackages").count === 0, "ring is full and nothing is pending");
+            check(find(view, "updatePackages").count === 0, "nothing is pending");
             primary.clicked(); check(fake.refreshes === 1, "Check again asks the backend");
-            setState("checking"); check(title.text === "Checking for updates…" && find(view, "updateRing").indeterminate, "checking state");
-            console.log(failure === "" ? "UPDATE_TEST_PASSED" : "UPDATE_TEST_FAILED " + failure);
-            Qt.quit();
+            setState("checking"); check(title.text === "Checking for updates…" && find(view, "updateProgress").indeterminate, "checking state");
+            footerProbe.start();
+        }
+    }
+    Timer {
+        id: footerProbe; interval: 80
+        property var states: ["available", "password", "running", "confirm", "failed", "uptodate", "checking"]
+        property int index: 0
+        onTriggered: {
+            checkFooter();
+            if (index < states.length) {
+                var initial = JSON.parse(JSON.stringify(fake.check));
+                initial.checkedAt = 1000; initial.updates = [{name:"omarchy",old:"4.0.6",new:"4.5.0"}]; initial.omarchy = initial.updates[0];
+                fake.checking = false; fake.check = initial;
+                setState(states[index++]); restart();
+            } else {
+                console.log(failure === "" ? "UPDATE_TEST_PASSED" : "UPDATE_TEST_FAILED " + failure);
+                Qt.quit();
+            }
         }
     }
     Timer {

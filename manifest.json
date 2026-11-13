@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "velunori.update",
   "name": "Velunori Update",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": "Velunori",
   "description": "Update window with release notes, package list and live progress for omarchy update.",
   "kinds": ["service", "overlay", "bar-widget"],
