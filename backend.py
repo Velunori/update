@@ -429,6 +429,25 @@ def update():
         if runner.dirty and now - last_write > 0.15:
             atomic_write(STATE, runner.state())
             runner.dirty, last_write = False, now
+    # waitpid can observe exit before the master PTY reports the final bytes.
+    # Drain only bytes already available so an inherited descendant descriptor
+    # cannot keep the update window waiting after the main command has exited.
+    os.set_blocking(fd, False)
+    while True:
+        try:
+            data = os.read(fd, 65536)
+        except (BlockingIOError, OSError):
+            break
+        if not data:
+            break
+        if log is not None:
+            with contextlib.suppress(OSError):
+                os.write(log, data)
+        pending += data.decode('utf-8', 'replace')
+        lines, pending = clean_lines(pending)
+        for line in lines:
+            runner.feed(line)
+    os.close(fd)
     if runner.exit_code is None:
         _, status = os.waitpid(pid, 0)
         runner.exit_code = os.waitstatus_to_exitcode(status)

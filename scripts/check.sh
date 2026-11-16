@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 repo_dir=$(cd "$(dirname "$0")/.." && pwd -P)
-core_dir="${VELUNORI_CORE_PATH:-$(dirname "$repo_dir")/core}"
+lib_dir="${VELUNORI_LIB_PATH:-$(dirname "$repo_dir")/lib}"
 layout="${VELUNORI_TEST_LAYOUT:-copy}"
 [[ "$layout" == copy || "$layout" == symlink ]] || { echo 'Unknown test layout' >&2; exit 1; }
 if [[ -z ${VELUNORI_PREVIEW_PATH:-} ]]; then
@@ -14,17 +14,16 @@ fi
 runtime_dir=$(mktemp -d)
 trap 'rm -rf "$runtime_dir"' EXIT
 chmod 700 "$runtime_dir"
-mkdir -p "$runtime_dir/velunori.update" "$runtime_dir/velunori.core" "$runtime_dir/imports/qs"
+mkdir -p "$runtime_dir/velunori.update" "$runtime_dir/lib" "$runtime_dir/imports/qs"
 cp "$repo_dir/"*.qml "$repo_dir/"*.js "$repo_dir/qmldir" "$repo_dir/backend.py" "$runtime_dir/velunori.update/"
 cp -r "$repo_dir/components" "$runtime_dir/velunori.update/"
-cp -r "$core_dir/kit" "$core_dir/components" "$core_dir/design" "$core_dir/assets" "$runtime_dir/velunori.core/"
+cp -r "$lib_dir/kit" "$lib_dir/components" "$lib_dir/design" "$lib_dir/assets" "$runtime_dir/lib/"
 if [[ "$layout" == symlink ]]; then
   mkdir "$runtime_dir/checkouts"
   mv "$runtime_dir/velunori.update" "$runtime_dir/checkouts/update"
-  mv "$runtime_dir/velunori.core" "$runtime_dir/checkouts/core"
-  ln -s core "$runtime_dir/checkouts/velunori.core"
+  mv "$runtime_dir/lib" "$runtime_dir/checkouts/lib"
   ln -s "$runtime_dir/checkouts/update" "$runtime_dir/velunori.update"
-  ln -s "$runtime_dir/checkouts/core" "$runtime_dir/velunori.core"
+  ln -s "$runtime_dir/checkouts/lib" "$runtime_dir/lib"
 fi
 shell_dir="${OMARCHY_PATH:-/usr/share/omarchy}/shell"
 for module in Commons Ui; do

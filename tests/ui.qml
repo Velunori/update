@@ -3,7 +3,7 @@ import QtQuick
 import Quickshell
 import "velunori.update/components"
 import "velunori.update/UpdateLogic.js" as Logic
-import "velunori.core/kit" as V
+import "lib/kit" as V
 
 ShellRoot {
     id: testRoot

@@ -5,12 +5,35 @@
   "version": "0.2.0",
   "author": "Velunori",
   "description": "Update window with release notes, package list and live progress for omarchy update.",
-  "kinds": ["service", "overlay", "bar-widget"],
+  "kinds": [
+    "service",
+    "overlay",
+    "bar-widget"
+  ],
   "keepLoaded": true,
-  "omarchy": {"clonedFrom": "omarchy.system-update"},
-  "entryPoints": {"service": "Service.qml", "overlay": "Window.qml", "barWidget": "Widget.qml"},
+  "omarchy": {
+    "clonedFrom": "omarchy.system-update"
+  },
+  "entryPoints": {
+    "service": "Service.qml",
+    "overlay": "Window.qml",
+    "barWidget": "Widget.qml"
+  },
   "barWidget": {
-    "displayName": "Updates", "description": "Shows pending updates and opens the update window",
-    "category": "System", "allowMultiple": false, "defaultSection": "center", "defaults": {}
+    "displayName": "Updates",
+    "description": "Shows pending updates and opens the update window",
+    "category": "System",
+    "allowMultiple": false,
+    "defaultSection": "center",
+    "defaults": {}
+  },
+  "velunori": {
+    "dependencies": {
+      "velunori.lib": {
+        "apiVersion": 1,
+        "minimumVersion": "1.0.0",
+        "maximumExclusive": "2.0.0"
+      }
+    }
   }
 }

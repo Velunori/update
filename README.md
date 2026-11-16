@@ -6,6 +6,8 @@
 
 ## Features
 
+- Bar icons and icon-only slots follow Omarchy’s active `Style.bar` sizes, including theme/font changes.
+
 - **Studio layout**: compact update status and a connected sequence of stages on the left; release notes, packages and activity on the right. Narrow windows use a stacked status header.
 - A fixed footer keeps Update, password entry and restart choices visible. Live progress uses a slim bar instead of a large counter ring.
 - **Highlights** shows actual release notes, with a pinned link to the full article. **Packages** lists old/new versions with AUR marked; **Activity** follows live output until you scroll up.
@@ -24,12 +26,14 @@ Pending updates come from `checkupdates` and `yay -Qua`; release notes from the 
 
 ## Requirements
 
-[Velunori core](https://github.com/velunori/core) 0.4.1 or later, installed next to this plugin; the Velunori bar does not have to be active. Python 3, `checkupdates` (pacman-contrib) and systemd. Developed against **Omarchy 4.0.6-1**.
+[Velunori Library](https://github.com/Velunori/lib) API 1 (version 1.x), installed in the real sibling `lib/` directory. Works with the stock Omarchy bar; Floating Bars is optional. Developed against **Omarchy 4.0.6-1**.
 
 ## Install
 
+Install the shared library first, then run from this repository directory:
+
 ```bash
-bash ~/dev/Velunori/update/scripts/install-local.sh
+bash scripts/install-local.sh
 omarchy-shell velunori.update show
 ```
 
@@ -69,7 +73,7 @@ Velunori is a set of independent plugins for the [Omarchy](https://omarchy.org) 
 
 | Plugin | What it is |
 | --- | --- |
-| [core](https://github.com/velunori/core) | The Island and Orbit bars, the appearance settings and the shared design kit |
+| [bar](https://github.com/Velunori/bar) | The Island and Orbit bars, the appearance settings and the shared design kit |
 | [clock](https://github.com/velunori/clock) | Clock in the bar with a month calendar |
 | [control-center](https://github.com/velunori/control-center) | Sound, displays, network, capture and reminders in one panel |
 | [notifications](https://github.com/velunori/notifications) | Notification cards and a session history |

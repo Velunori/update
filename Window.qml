@@ -6,7 +6,7 @@ import qs.Commons as Commons
 import qs.Ui
 import "." as Local
 import "components"
-import "../velunori.core/kit" as V
+import "../lib/kit" as V
 
 Item {
   id: root

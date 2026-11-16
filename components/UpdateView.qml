@@ -2,7 +2,7 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import "../../velunori.core/kit" as V
+import "../../lib/kit" as V
 import "../UpdateLogic.js" as Logic
 
 // The whole window content. It only reads `backend` (the service, or a stand-in
